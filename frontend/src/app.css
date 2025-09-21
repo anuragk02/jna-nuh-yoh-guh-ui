@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* Dark theme with Fira Code font */
+* {
+	font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+}
+
+body {
+	background-color: #1a1a1a;
+	color: #e5e5e5;
+}
+
+/* Custom dark input styles */
+input, textarea {
+	background-color: #404040 !important;
+	border-color: #525252 !important;
+	color: #e5e5e5 !important;
+}
+
+input:focus, textarea:focus {
+	background-color: #4a4a4a !important;
+	border-color: #6b7280 !important;
+	ring-color: #6b7280 !important;
+}
+
+/* Button overrides for dark theme */
+button {
+	font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+}
