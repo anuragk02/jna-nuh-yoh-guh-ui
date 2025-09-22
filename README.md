@@ -7,3 +7,7 @@ For now the scope is simple, The backend will be hosted on localhost right now, 
 On the Home page I want a simple scrollable element which presents the list of all Essays, And an Option to Edit and Delete on the right side of the title on each Essay element in the scrollable list.
 
 That is it for now, I want to be able to Click on the list of essays and look at the Essays(Read), Post new Essays, Update Essays, and Delete them.
+
+Sep 23 2025
+
+There has been an update with how I am planning to structure the Data for this project and so, I am now calling essays Narratives, New documentation has these new schemas and api endpoints.

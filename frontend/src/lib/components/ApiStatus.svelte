@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { essayApi } from '$lib/api.js';
+	import { narrativeApi } from '$lib/api.js';
 
 	let connectionStatus = $state<'testing' | 'connected' | 'failed'>('testing');
 	let apiUrl = 'http://localhost:8080/api/v1';
@@ -10,7 +10,7 @@
 		console.log('Testing API connection...');
 		
 		try {
-			const isConnected = await essayApi.testConnection();
+			const isConnected = await narrativeApi.testConnection();
 			if (isConnected) {
 				connectionStatus = 'connected';
 			} else {
@@ -29,10 +29,10 @@
 		errorDetails = '';
 		
 		try {
-			const isConnected = await essayApi.testConnection();
+			const isConnected = await narrativeApi.testConnection();
 			if (isConnected) {
 				connectionStatus = 'connected';
-				// Refresh the page to reload essays
+				// Refresh the page to reload narratives
 				window.location.reload();
 			} else {
 				connectionStatus = 'failed';

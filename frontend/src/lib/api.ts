@@ -1,4 +1,4 @@
-import type { Essay, CreateEssayRequest, UpdateEssayRequest, DeleteEssayResponse } from './types.js';
+import type { Narrative, CreateNarrativeRequest, UpdateNarrativeRequest, DeleteNarrativeResponse } from './types.js';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
@@ -31,7 +31,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 		console.log('Raw response text:', responseText);
 		
 		if (!responseText) {
-			console.log('Empty response body, returning empty array for essays');
+			console.log('Empty response body, returning empty array for narratives');
 			return [] as T;
 		}
 		
@@ -48,9 +48,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 /**
- * Essay API functions with proper TypeScript types and enhanced error handling
+ * Narrative API functions with proper TypeScript types and enhanced error handling
  */
-export const essayApi = {
+export const narrativeApi = {
 	/**
 	 * Test API connectivity
 	 */
@@ -59,7 +59,7 @@ export const essayApi = {
 		
 		try {
 			// Try a simple GET request to see if the server is responding
-			const response = await fetch(`${API_BASE_URL}/essays`, {
+			const response = await fetch(`${API_BASE_URL}/narratives`, {
 				method: 'GET',
 				headers: {
 					'Accept': 'application/json'
@@ -83,14 +83,14 @@ export const essayApi = {
 	},
 
 	/**
-	 * Get all essays
+	 * Get all narratives
 	 */
-	async getAll(): Promise<Essay[]> {
-		console.log('Fetching all essays from:', `${API_BASE_URL}/essays`);
+	async getAll(): Promise<Narrative[]> {
+		console.log('Fetching all narratives from:', `${API_BASE_URL}/narratives`);
 		
 		try {
-			const response = await fetch(`${API_BASE_URL}/essays`);
-			const result = await handleResponse<Essay[]>(response);
+			const response = await fetch(`${API_BASE_URL}/narratives`);
+			const result = await handleResponse<Narrative[]>(response);
 			
 			// Ensure we always return an array
 			if (!result) {
@@ -103,84 +103,84 @@ export const essayApi = {
 				return [];
 			}
 			
-			console.log('Successfully fetched essays:', result.length, 'items');
+			console.log('Successfully fetched narratives:', result.length, 'items');
 			return result;
 		} catch (error) {
-			console.error('Failed to fetch essays:', error);
+			console.error('Failed to fetch narratives:', error);
 			throw error;
 		}
 	},
 
 	/**
-	 * Get a single essay by ID
+	 * Get a single narrative by ID
 	 */
-	async getById(id: string): Promise<Essay> {
-		console.log('Fetching essay by ID:', id);
+	async getById(id: string): Promise<Narrative> {
+		console.log('Fetching narrative by ID:', id);
 		
 		try {
-			const response = await fetch(`${API_BASE_URL}/essays/${id}`);
-			return await handleResponse<Essay>(response);
+			const response = await fetch(`${API_BASE_URL}/narratives/${id}`);
+			return await handleResponse<Narrative>(response);
 		} catch (error) {
-			console.error(`Failed to fetch essay ${id}:`, error);
+			console.error(`Failed to fetch narrative ${id}:`, error);
 			throw error;
 		}
 	},
 
 	/**
-	 * Create a new essay
+	 * Create a new narrative
 	 */
-	async create(essay: CreateEssayRequest): Promise<Essay> {
-		console.log('Creating new essay:', essay);
+	async create(narrative: CreateNarrativeRequest): Promise<Narrative> {
+		console.log('Creating new narrative:', narrative);
 		
 		try {
-			const response = await fetch(`${API_BASE_URL}/essays`, {
+			const response = await fetch(`${API_BASE_URL}/narratives`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(essay)
+				body: JSON.stringify(narrative)
 			});
-			return await handleResponse<Essay>(response);
+			return await handleResponse<Narrative>(response);
 		} catch (error) {
-			console.error('Failed to create essay:', error);
+			console.error('Failed to create narrative:', error);
 			throw error;
 		}
 	},
 
 	/**
-	 * Update an existing essay
+	 * Update an existing narrative
 	 */
-	async update(id: string, essay: UpdateEssayRequest): Promise<Essay> {
-		console.log('Updating essay:', id, essay);
+	async update(id: string, narrative: UpdateNarrativeRequest): Promise<Narrative> {
+		console.log('Updating narrative:', id, narrative);
 		
 		try {
-			const response = await fetch(`${API_BASE_URL}/essays/${id}`, {
+			const response = await fetch(`${API_BASE_URL}/narratives/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(essay)
+				body: JSON.stringify(narrative)
 			});
-			return await handleResponse<Essay>(response);
+			return await handleResponse<Narrative>(response);
 		} catch (error) {
-			console.error(`Failed to update essay ${id}:`, error);
+			console.error(`Failed to update narrative ${id}:`, error);
 			throw error;
 		}
 	},
 
 	/**
-	 * Delete an essay
+	 * Delete a narrative
 	 */
-	async delete(id: string): Promise<DeleteEssayResponse> {
-		console.log('Deleting essay:', id);
+	async delete(id: string): Promise<DeleteNarrativeResponse> {
+		console.log('Deleting narrative:', id);
 		
 		try {
-			const response = await fetch(`${API_BASE_URL}/essays/${id}`, {
+			const response = await fetch(`${API_BASE_URL}/narratives/${id}`, {
 				method: 'DELETE'
 			});
-			return await handleResponse<DeleteEssayResponse>(response);
+			return await handleResponse<DeleteNarrativeResponse>(response);
 		} catch (error) {
-			console.error(`Failed to delete essay ${id}:`, error);
+			console.error(`Failed to delete narrative ${id}:`, error);
 			throw error;
 		}
 	}

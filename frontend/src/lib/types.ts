@@ -1,21 +1,22 @@
-export interface Essay {
+export interface Narrative {
 	id: string;
 	title: string;
 	content: string;
 	created_at: string; // Always present according to API docs
+	updated_at?: string; // Present on updates
 }
 
-export interface CreateEssayRequest {
+export interface CreateNarrativeRequest {
 	title: string;
 	content: string;
 }
 
-export interface UpdateEssayRequest {
+export interface UpdateNarrativeRequest {
 	title: string;
 	content: string;
 }
 
-export interface DeleteEssayResponse {
+export interface DeleteNarrativeResponse {
 	message: string;
 }
 

@@ -1,26 +1,26 @@
 <script lang="ts">
-	import EssayList from '$lib/components/EssayList.svelte';
-	import EssayEditor from '$lib/components/EssayEditor.svelte';
+	import NarrativeList from '$lib/components/NarrativeList.svelte';
+	import NarrativeEditor from '$lib/components/NarrativeEditor.svelte';
 	import ApiStatus from '$lib/components/ApiStatus.svelte';
 
 	let currentView: 'list' | 'editor' | 'status' = 'status'; // Start with status check
-	let editingEssayId: string | null = null;
+	let editingNarrativeId: string | null = null;
 
 	function showList() {
 		currentView = 'list';
-		editingEssayId = null;
+		editingNarrativeId = null;
 	}
 
-	function showEditor(essayId: string | null = null) {
+	function showEditor(narrativeId: string | null = null) {
 		currentView = 'editor';
-		editingEssayId = essayId;
+		editingNarrativeId = narrativeId;
 	}
 
 	function showStatus() {
 		currentView = 'status';
 	}
 
-	function handleEssaySaved() {
+	function handleNarrativeSaved() {
 		showList();
 	}
 
@@ -31,7 +31,7 @@
 
 <svelte:head>
 	<title>jna-nuh-yoh-guh</title>
-	<meta name="description" content="Knowledge management system for essays, concepts, and ideas" />
+	<meta name="description" content="Systems thinking knowledge management for narratives and insights" />
 </svelte:head>
 
 <main class="min-h-screen bg-gray-900">
@@ -49,7 +49,7 @@
 					onclick={showList}
 					class="px-3 py-1 rounded text-sm font-medium transition-colors {currentView === 'list' ? 'bg-gray-700 text-gray-200' : 'text-gray-400 hover:text-gray-200'}"
 				>
-					Essays
+					Narratives
 				</button>
 			</div>
 		</div>
@@ -59,14 +59,14 @@
 	{#if currentView === 'status'}
 		<ApiStatus />
 	{:else if currentView === 'list'}
-		<EssayList 
+		<NarrativeList 
 			onEdit={showEditor} 
 			onNew={() => showEditor(null)}
 		/>
 	{:else if currentView === 'editor'}
-		<EssayEditor 
-			essayId={editingEssayId}
-			onSave={handleEssaySaved}
+		<NarrativeEditor 
+			narrativeId={editingNarrativeId}
+			onSave={handleNarrativeSaved}
 			onCancel={handleEditorCancel}
 		/>
 	{/if}

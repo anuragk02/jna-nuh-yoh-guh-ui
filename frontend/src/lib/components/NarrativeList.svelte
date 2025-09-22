@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { essayApi } from '$lib/api.js';
-	import type { Essay } from '$lib/types.js';
+	import { narrativeApi } from '$lib/api.js';
+	import type { Narrative } from '$lib/types.js';
 
 	interface Props {
 		onEdit: (id: string) => void;
@@ -10,15 +10,15 @@
 
 	let { onEdit, onNew }: Props = $props();
 
-	let essays = $state<Essay[]>([]);
+	let narratives = $state<Narrative[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
 	onMount(async () => {
-		console.log('EssayList component mounted, testing API connection...');
+		console.log('NarrativeList component mounted, testing API connection...');
 		
 		// Test API connectivity first
-		const isConnected = await essayApi.testConnection();
+		const isConnected = await narrativeApi.testConnection();
 		if (!isConnected) {
 			error = 'Unable to connect to the API server. Make sure the backend is running on http://localhost:8080';
 			loading = false;
@@ -26,38 +26,38 @@
 		}
 		
 		try {
-			console.log('Connection successful, fetching essays...');
-			const result = await essayApi.getAll();
-			console.log('Essays fetched in component:', result);
-			console.log('Essays type:', typeof result);
-			console.log('Essays is array:', Array.isArray(result));
-			console.log('Essays length:', result?.length);
+			console.log('Connection successful, fetching narratives...');
+			const result = await narrativeApi.getAll();
+			console.log('Narratives fetched in component:', result);
+			console.log('Narratives type:', typeof result);
+			console.log('Narratives is array:', Array.isArray(result));
+			console.log('Narratives length:', result?.length);
 			
-			essays = result || []; // Ensure we have an array
-			console.log('Essays state updated:', essays);
+			narratives = result || []; // Ensure we have an array
+			console.log('Narratives state updated:', narratives);
 		} catch (err) {
-			console.error('Error loading essays:', err);
-			error = err instanceof Error ? err.message : 'An error occurred while loading essays';
+			console.error('Error loading narratives:', err);
+			error = err instanceof Error ? err.message : 'An error occurred while loading narratives';
 		} finally {
 			loading = false;
-			console.log('Loading completed. Final state - essays:', essays, 'error:', error);
+			console.log('Loading completed. Final state - narratives:', narratives, 'error:', error);
 		}
 	});
 
 	async function handleDelete(id: string) {
-		if (!confirm('Are you sure you want to delete this essay?')) {
+		if (!confirm('Are you sure you want to delete this narrative?')) {
 			return;
 		}
 
 		try {
-			await essayApi.delete(id);
-			essays = essays.filter((essay) => essay.id !== id);
+			await narrativeApi.delete(id);
+			narratives = narratives.filter((narrative) => narrative.id !== id);
 		} catch (err) {
-			alert(`Failed to delete essay: ${err instanceof Error ? err.message : 'An error occurred'}`);
+			alert(`Failed to delete narrative: ${err instanceof Error ? err.message : 'An error occurred'}`);
 		}
 	}
 
-	function handleEssayClick(id: string) {
+	function handleNarrativeClick(id: string) {
 		onEdit(id);
 	}
 
@@ -71,18 +71,18 @@
 
 <div class="w-full max-w-4xl mx-auto p-6">
 	<div class="flex justify-between items-center mb-6">
-		<h1 class="text-3xl font-bold text-gray-200">Essays</h1>
+		<h1 class="text-3xl font-bold text-gray-200">Narratives</h1>
 		<button
 			onclick={onNew}
 			class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
 		>
-			New Essay
+			New Narrative
 		</button>
 	</div>
 
 	{#if loading}
 		<div class="text-center py-8">
-			<div class="text-gray-400">Loading essays...</div>
+			<div class="text-gray-400">Loading narratives...</div>
 		</div>
 	{:else if error}
 		<div class="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded-md">
@@ -93,59 +93,59 @@
 		<div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-4 text-xs">
 			<div class="text-gray-400">
 				<strong>Debug Info:</strong> 
-				Essays: {essays ? essays.length : 'null'} | 
-				Type: {typeof essays} | 
-				Is Array: {Array.isArray(essays)} |
+				Narratives: {narratives ? narratives.length : 'null'} | 
+				Type: {typeof narratives} | 
+				Is Array: {Array.isArray(narratives)} |
 				Loading: {loading} |
 				Error: {error || 'none'}
 			</div>
 		</div>
 		
-		{#if essays.length === 0}
+		{#if narratives.length === 0}
 			<div class="text-center py-8">
-				<div class="text-gray-400 mb-4">No essays found</div>
+				<div class="text-gray-400 mb-4">No narratives found</div>
 				<button
 					onclick={onNew}
 					class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
 				>
-					Create your first essay
+					Create your first narrative
 				</button>
 			</div>
 		{:else}
 			<div class="space-y-4 max-h-96 overflow-y-auto">
-				{#each essays as essay (essay.id)}
+				{#each narratives as narrative (narrative.id)}
 					<div class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:shadow-lg hover:bg-gray-750 transition-all">
 					<div class="flex justify-between items-start">
 						<div 
 							class="flex-1 cursor-pointer" 
 							role="button"
 							tabindex="0"
-							onclick={() => handleEssayClick(essay.id)}
-							onkeydown={(e) => handleKeydown(e, essay.id)}
+							onclick={() => handleNarrativeClick(narrative.id)}
+							onkeydown={(e) => handleKeydown(e, narrative.id)}
 						>
 							<h2 class="text-xl font-semibold text-gray-200 mb-2">
-								{essay.title || 'Untitled Essay'}
+								{narrative.title || 'Untitled Narrative'}
 							</h2>
-							{#if essay.content}
+							{#if narrative.content}
 								<p class="text-gray-400 line-clamp-3">
-									{essay.content.substring(0, 150)}{essay.content.length > 150 ? '...' : ''}
+									{narrative.content.substring(0, 150)}{narrative.content.length > 150 ? '...' : ''}
 								</p>
 							{/if}
-							{#if essay.created_at}
+							{#if narrative.created_at}
 								<p class="text-sm text-gray-500 mt-2">
-									Created: {new Date(essay.created_at).toLocaleDateString()}
+									Created: {new Date(narrative.created_at).toLocaleDateString()}
 								</p>
 							{/if}
 						</div>
 						<div class="flex space-x-2 ml-4">
 							<button
-								onclick={() => onEdit(essay.id)}
+								onclick={() => onEdit(narrative.id)}
 								class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1 rounded text-sm font-medium transition-colors"
 							>
 								Edit
 							</button>
 							<button
-								onclick={() => handleDelete(essay.id)}
+								onclick={() => handleDelete(narrative.id)}
 								class="bg-red-800 hover:bg-red-700 text-red-300 px-3 py-1 rounded text-sm font-medium transition-colors"
 							>
 								Delete

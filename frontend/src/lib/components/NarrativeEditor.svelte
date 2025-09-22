@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { essayApi } from '$lib/api.js';
-	import type { Essay } from '$lib/types.js';
+	import { narrativeApi } from '$lib/api.js';
+	import type { Narrative } from '$lib/types.js';
 
 	interface Props {
-		essayId: string | null;
+		narrativeId: string | null;
 		onSave: () => void;
 		onCancel: () => void;
 	}
 
-	let { essayId, onSave, onCancel }: Props = $props();
+	let { narrativeId, onSave, onCancel }: Props = $props();
 
 	let title = $state('');
 	let content = $state('');
@@ -17,26 +17,26 @@
 	let saving = $state(false);
 	let error = $state<string | null>(null);
 
-	let isEditing = $derived(essayId !== null);
+	let isEditing = $derived(narrativeId !== null);
 
 	onMount(async () => {
-		if (essayId) {
-			await loadEssay();
+		if (narrativeId) {
+			await loadNarrative();
 		}
 	});
 
-	async function loadEssay() {
-		if (!essayId) return;
+	async function loadNarrative() {
+		if (!narrativeId) return;
 		
 		loading = true;
 		error = null;
 		
 		try {
-			const essay: Essay = await essayApi.getById(essayId);
-			title = essay.title || '';
-			content = essay.content || '';
+			const narrative: Narrative = await narrativeApi.getById(narrativeId);
+			title = narrative.title || '';
+			content = narrative.content || '';
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to load essay';
+			error = err instanceof Error ? err.message : 'Failed to load narrative';
 		} finally {
 			loading = false;
 		}
@@ -44,7 +44,7 @@
 
 	async function handleSave() {
 		if (!title.trim()) {
-			alert('Please enter a title for your essay');
+			alert('Please enter a title for your narrative');
 			return;
 		}
 
@@ -52,17 +52,17 @@
 		error = null;
 
 		try {
-			const essayData = { title: title.trim(), content: content.trim() };
+			const narrativeData = { title: title.trim(), content: content.trim() };
 			
-			if (isEditing && essayId) {
-				await essayApi.update(essayId, essayData);
+			if (isEditing && narrativeId) {
+				await narrativeApi.update(narrativeId, narrativeData);
 			} else {
-				await essayApi.create(essayData);
+				await narrativeApi.create(narrativeData);
 			}
 			
 			onSave();
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save essay';
+			error = err instanceof Error ? err.message : 'Failed to save narrative';
 		} finally {
 			saving = false;
 		}
@@ -82,16 +82,16 @@
 <div class="w-full max-w-4xl mx-auto p-6">
 	<div class="mb-6">
 		<h1 class="text-3xl font-bold text-gray-200 mb-2">
-			{isEditing ? 'Edit Essay' : 'New Essay'}
+			{isEditing ? 'Edit Narrative' : 'New Narrative'}
 		</h1>
 		<p class="text-gray-400">
-			{isEditing ? 'Update your essay below' : 'Write your thoughts and ideas'}
+			{isEditing ? 'Update your narrative below' : 'Share your system thinking insights'}
 		</p>
 	</div>
 
 	{#if loading}
 		<div class="text-center py-8">
-			<div class="text-gray-400">Loading essay...</div>
+			<div class="text-gray-400">Loading narrative...</div>
 		</div>
 	{:else}
 		<div class="space-y-6">
@@ -110,7 +110,7 @@
 					id="title"
 					type="text"
 					bind:value={title}
-					placeholder="Enter your essay title..."
+					placeholder="Enter your narrative title..."
 					class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-gray-200 placeholder-gray-500"
 					disabled={saving}
 				/>
@@ -124,7 +124,7 @@
 				<textarea
 					id="content"
 					bind:value={content}
-					placeholder="Start writing your essay here..."
+					placeholder="Share your systems thinking insights here..."
 					rows="20"
 					class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 resize-vertical min-h-96 text-gray-200 placeholder-gray-500"
 					disabled={saving}
@@ -159,7 +159,7 @@
 						{#if saving}
 							Saving...
 						{:else}
-							{isEditing ? 'Update Essay' : 'Save Essay'}
+							{isEditing ? 'Update Narrative' : 'Save Narrative'}
 						{/if}
 					</button>
 				</div>
