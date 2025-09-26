@@ -16,6 +16,12 @@
 	let loading = $state(false);
 	let saving = $state(false);
 	let error = $state<string | null>(null);
+	
+	// Analysis modal state
+	let showAnalysisModal = $state(false);
+	let analyzing = $state(false);
+	let analysisResult = $state<any>(null);
+	let analysisError = $state<string | null>(null);
 
 	let isEditing = $derived(narrativeId !== null);
 
@@ -77,6 +83,55 @@
 			onCancel();
 		}
 	}
+
+	async function handleAnalyze() {
+		if (!title.trim() && !content.trim()) {
+			alert('Please add some title or content to analyze');
+			return;
+		}
+
+		if (!isEditing || !narrativeId) {
+			alert('Please save the narrative first before analyzing');
+			return;
+		}
+
+		// Show modal and start analysis
+		showAnalysisModal = true;
+		analyzing = true;
+		analysisResult = null;
+		analysisError = null;
+
+		try {
+			const response = await fetch(`http://localhost:8080/api/v1/narratives/analyze`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: narrativeId
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			}
+
+			const result = await response.json();
+			analysisResult = result;
+		} catch (err) {
+			console.error('Analysis failed:', err);
+			analysisError = err instanceof Error ? err.message : 'Analysis failed';
+		} finally {
+			analyzing = false;
+		}
+	}
+
+	function closeAnalysisModal() {
+		showAnalysisModal = false;
+		analyzing = false;
+		analysisResult = null;
+		analysisError = null;
+	}
 </script>
 
 <div class="w-full max-w-4xl mx-auto p-6">
@@ -85,7 +140,7 @@
 			{isEditing ? 'Edit Narrative' : 'New Narrative'}
 		</h1>
 		<p class="text-gray-400">
-			{isEditing ? 'Update your narrative below' : 'Share your system thinking insights'}
+			{isEditing ? 'Update your narrative below' : 'Share your thoughts'}
 		</p>
 	</div>
 
@@ -152,6 +207,14 @@
 					</div>
 					
 					<button
+						onclick={handleAnalyze}
+						disabled={saving || (!title.trim() && !content.trim())}
+						class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:cursor-not-allowed text-white px-6 py-2 rounded-md font-medium transition-colors"
+					>
+						Analyze
+					</button>
+					
+					<button
 						onclick={handleSave}
 						disabled={saving || !title.trim()}
 						class="bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:cursor-not-allowed text-gray-200 px-6 py-2 rounded-md font-medium transition-colors"
@@ -167,3 +230,61 @@
 		</div>
 	{/if}
 </div>
+
+<!-- Analysis Modal -->
+{#if showAnalysisModal}
+	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+		<div class="bg-gray-800 rounded-lg max-w-2xl w-full max-h-96 overflow-hidden">
+			<div class="p-6">
+				<div class="flex justify-between items-center mb-4">
+					<h2 class="text-xl font-bold text-gray-200">
+						{analyzing ? 'Analyzing Narrative...' : 'Analysis Results'}
+					</h2>
+					{#if !analyzing}
+						<button
+							onclick={closeAnalysisModal}
+							class="text-gray-400 hover:text-gray-200 text-2xl"
+						>
+							×
+						</button>
+					{/if}
+				</div>
+
+				<div class="analysis-content">
+					{#if analyzing}
+						<div class="flex items-center justify-center py-8">
+							<div class="text-center">
+								<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+								<p class="text-gray-400">Processing your narrative...</p>
+							</div>
+						</div>
+					{:else if analysisError}
+						<div class="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded-md mb-4">
+							Error: {analysisError}
+						</div>
+						<div class="flex justify-end">
+							<button
+								onclick={closeAnalysisModal}
+								class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
+							>
+								Close
+							</button>
+						</div>
+					{:else if analysisResult}
+						<div class="bg-gray-700 p-4 rounded-md mb-4 max-h-64 overflow-y-auto">
+							<pre class="text-gray-200 text-sm whitespace-pre-wrap">{JSON.stringify(analysisResult, null, 2)}</pre>
+						</div>
+						<div class="flex justify-end">
+							<button
+								onclick={closeAnalysisModal}
+								class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md font-medium transition-colors"
+							>
+								Close
+							</button>
+						</div>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}

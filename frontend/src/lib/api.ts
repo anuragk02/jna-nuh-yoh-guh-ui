@@ -59,7 +59,7 @@ export const narrativeApi = {
 		
 		try {
 			// Try a simple GET request to see if the server is responding
-			const response = await fetch(`${API_BASE_URL}/narratives`, {
+			const response = await fetch(`${API_BASE_URL}/health`, {
 				method: 'GET',
 				headers: {
 					'Accept': 'application/json'

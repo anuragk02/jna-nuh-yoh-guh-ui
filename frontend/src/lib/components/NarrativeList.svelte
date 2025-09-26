@@ -67,17 +67,48 @@
 			onEdit(id);
 		}
 	}
+
+	async function handleClean() {
+		try {
+			const response = await fetch('http://localhost:8080/api/v1/clean', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			}
+
+			console.log('Clean operation completed successfully');
+			// Reload narratives after cleaning
+			const result = await narrativeApi.getAll();
+			narratives = result;
+		} catch (err) {
+			console.error('Clean operation failed:', err);
+			error = err instanceof Error ? err.message : 'Clean operation failed';
+		}
+	}
 </script>
 
 <div class="w-full max-w-4xl mx-auto p-6">
 	<div class="flex justify-between items-center mb-6">
 		<h1 class="text-3xl font-bold text-gray-200">Narratives</h1>
-		<button
-			onclick={onNew}
-			class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
-		>
-			New Narrative
-		</button>
+		<div class="flex space-x-3">
+			<button
+				onclick={handleClean}
+				class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
+			>
+				Clean
+			</button>
+			<button
+				onclick={onNew}
+				class="bg-gray-600 hover:bg-gray-500 text-gray-200 px-4 py-2 rounded-md font-medium transition-colors"
+			>
+				New Narrative
+			</button>
+		</div>
 	</div>
 
 	{#if loading}
